@@ -218,14 +218,15 @@ sound_cases = [
   [makao, "play", "7H|", "play"], [makao, "draw", "", "draw"],
   # Poker's accepted state transitions, including private exchange receipts,
   # have separate coverage in poker/accepted_sounds_contract_test.rb.
-  [yahtzee, "roll", "2,3,4,4,4", "roll"], [yahtzee, "score", "chance", "play"],
+  [yahtzee, "roll", "2,3,4,4,4", "roll"], [yahtzee, "score", "chance", "cht-bank"],
   [monopoly, "roll", "1,2,seed", "roll"], [monopoly, "buy", "", "play2"]
 ]
 sound_cases.each do |game, action, value, expected|
   state = state_for(game)
   actual = GameRoomSounds.event_cue(game: game, event: event(action, value), before_replay: view(state),
     after_replay: view(state), repository: REPOSITORY, viewer: "Alice")
-  assert(actual == expected, "#{game.id}/#{action}: missing or wrong sound #{actual}")
+  assert(actual == expected,
+    "#{game.id}/#{action}: expected sound #{expected.inspect}, got #{actual.inspect}")
   assert(File.file?(File.expand_path("../../Audio/#{expected}.opus", __dir__)), "Missing sound asset #{expected}")
   checks += 1
 end
